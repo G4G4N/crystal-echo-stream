@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Home, Music, Library, LogOut } from "lucide-react";
-import logo from "@/assets/humm-logo.png";
 
 const Navigation = () => {
   const [user, setUser] = useState<any>(null);
@@ -30,8 +29,7 @@ const Navigation = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-lg border-b border-border">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group">
-          <img src={logo} alt="humm." className="h-8 w-auto transition-transform group-hover:scale-105" />
-          <span className="text-xl font-semibold text-foreground">humm.</span>
+          <span className="text-2xl font-semibold text-foreground font-orbitron transition-transform group-hover:scale-105">humm.</span>
         </Link>
 
         {user && (

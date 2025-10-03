@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import logo from "@/assets/humm-logo.png";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -53,8 +52,7 @@ const Auth = () => {
     <div className="min-h-screen bg-background flex items-center justify-center p-6">
       <Card className="w-full max-w-md p-8 bg-card border-border">
         <div className="flex flex-col items-center mb-8">
-          <img src={logo} alt="humm." className="h-12 w-auto mb-4" />
-          <h1 className="text-2xl font-semibold">humm.</h1>
+          <h1 className="text-3xl font-semibold font-orbitron">humm.</h1>
           <p className="text-muted-foreground mt-2">
             {isLogin ? "Welcome back" : "Create your account"}
           </p>
