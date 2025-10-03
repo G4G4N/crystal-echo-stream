@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import Navigation from "@/components/Navigation";
 
 const Admin = () => {
   const [s3Bucket, setS3Bucket] = useState("");
@@ -34,7 +35,9 @@ const Admin = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background p-6 font-inter">
+    <div className="min-h-screen bg-background font-inter">
+      <Navigation />
+      <div className="p-6 pt-24">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8 animate-slide-up">
           <h1 className="text-5xl font-bold font-orbitron mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
@@ -149,6 +152,7 @@ const Admin = () => {
         </div>
       </div>
     </div>
+  </div>
   );
 };
 

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Play, Zap, Shield, Sparkles } from "lucide-react";
+import Navigation from "@/components/Navigation";
 import heroImage from "@/assets/hero-music.jpg";
 
 const Index = () => {
@@ -25,8 +26,10 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background font-inter">
+      <Navigation />
+      
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden pt-20">
         <div className="absolute inset-0 bg-grid-pattern bg-[size:40px_40px] opacity-10"></div>
         
         <div className="relative max-w-7xl mx-auto px-6 py-24">

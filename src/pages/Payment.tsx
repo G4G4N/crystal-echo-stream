@@ -2,6 +2,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
+import Navigation from "@/components/Navigation";
 
 const Payment = () => {
   const plans = [
@@ -52,7 +53,9 @@ const Payment = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6 font-inter">
+    <div className="min-h-screen bg-background font-inter">
+      <Navigation />
+      <div className="p-6 pt-24">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16 animate-slide-up">
           <h1 className="text-6xl font-bold font-orbitron mb-4 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
@@ -130,6 +133,7 @@ const Payment = () => {
         </Card>
       </div>
     </div>
+  </div>
   );
 };
 

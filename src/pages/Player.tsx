@@ -3,6 +3,7 @@ import { Play, Pause, SkipForward, SkipBack, Volume2, Heart } from "lucide-react
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Card } from "@/components/ui/card";
+import Navigation from "@/components/Navigation";
 
 const Player = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -17,7 +18,9 @@ const Player = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background p-6 font-inter">
+    <div className="min-h-screen bg-background font-inter">
+      <Navigation />
+      <div className="p-6 pt-24">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-5xl font-bold font-orbitron mb-8 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent animate-slide-up">
           Now Playing
@@ -126,6 +129,7 @@ const Player = () => {
         </div>
       </div>
     </div>
+  </div>
   );
 };
 
