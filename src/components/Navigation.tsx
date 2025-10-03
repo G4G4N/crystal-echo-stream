@@ -8,6 +8,7 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group">
           <img src={logo} alt="humm." className="h-8 w-auto transition-transform group-hover:scale-105" />
+          <span className="text-xl font-semibold text-foreground">humm.</span>
         </Link>
 
         <div className="flex items-center gap-6">
