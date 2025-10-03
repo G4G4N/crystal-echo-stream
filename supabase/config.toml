@@ -1,1 +1,10 @@
 project_id = "evvholhxxqcfxelozkjb"
+
+[functions.stream]
+verify_jwt = false
+
+[functions.jamendo-resolve]
+verify_jwt = false
+
+[functions.ia-resolve]
+verify_jwt = false

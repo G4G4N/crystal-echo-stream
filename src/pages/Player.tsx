@@ -1,14 +1,17 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Play, Pause, SkipForward, SkipBack, Volume2, Heart, Repeat, Shuffle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Card } from "@/components/ui/card";
 import Navigation from "@/components/Navigation";
+import { resolveJamendoFLAC, resolveIAFLAC } from "@/lib/streaming";
+import { toast } from "sonner";
 
 const Player = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState([80]);
   const [progress, setProgress] = useState([30]);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const songs = [
     { id: 1, title: "Neon Dreams", artist: "Cyber Waves", duration: "3:45", hiRes: true },
@@ -16,6 +19,49 @@ const Player = () => {
     { id: 3, title: "Crystal Pulse", artist: "Synth Master", duration: "3:58", hiRes: true },
     { id: 4, title: "Quantum Echo", artist: "Space Beats", duration: "5:23", hiRes: true },
   ];
+
+  async function playJamendo(trackId: string) {
+    try {
+      toast.loading("Loading track from Jamendo...");
+      const { url, title, artist } = await resolveJamendoFLAC(trackId);
+      if (audioRef.current) {
+        audioRef.current.src = url;
+        await audioRef.current.play();
+        setIsPlaying(true);
+        toast.success(`Now playing: ${title} by ${artist}`);
+      }
+    } catch (error) {
+      console.error("Error playing Jamendo track:", error);
+      toast.error("Failed to load Jamendo track");
+    }
+  }
+
+  async function playInternetArchive(identifier: string) {
+    try {
+      toast.loading("Loading track from Internet Archive...");
+      const { url, title, artist } = await resolveIAFLAC(identifier);
+      if (audioRef.current) {
+        audioRef.current.src = url;
+        await audioRef.current.play();
+        setIsPlaying(true);
+        toast.success(`Now playing: ${title}${artist ? ` by ${artist}` : ''}`);
+      }
+    } catch (error) {
+      console.error("Error playing Internet Archive track:", error);
+      toast.error("Failed to load Internet Archive track");
+    }
+  }
+
+  const togglePlayPause = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -74,6 +120,27 @@ const Player = () => {
                     </div>
                   ))}
                 </div>
+
+                {/* Test Streaming Controls */}
+                <div className="mt-6 pt-6 border-t border-border space-y-2">
+                  <h4 className="text-sm font-medium mb-3 text-muted-foreground">Test Streaming</h4>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full justify-start text-xs"
+                    onClick={() => playJamendo("1951066")}
+                  >
+                    🎵 Test Jamendo FLAC
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full justify-start text-xs"
+                    onClick={() => playInternetArchive("gd1977-05-08.shure57.stevenson.29303.flac16")}
+                  >
+                    📚 Test Internet Archive
+                  </Button>
+                </div>
               </Card>
             </div>
           </div>
@@ -120,7 +187,7 @@ const Player = () => {
                 <Button 
                   size="icon"
                   className="w-10 h-10 rounded-full bg-primary hover:bg-primary/90"
-                  onClick={() => setIsPlaying(!isPlaying)}
+                  onClick={togglePlayPause}
                 >
                   {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
                 </Button>
@@ -146,6 +213,14 @@ const Player = () => {
             </div>
           </div>
         </div>
+
+        {/* Hidden Audio Element */}
+        <audio 
+          ref={audioRef} 
+          preload="none"
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+        />
       </div>
     </div>
   );
