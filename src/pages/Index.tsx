@@ -1,126 +1,113 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Play, Zap, Shield, Sparkles } from "lucide-react";
+import { Play, Music } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import heroImage from "@/assets/hero-music.jpg";
 
 const Index = () => {
-  const features = [
-    {
-      icon: <Zap className="w-8 h-8" />,
-      title: "Ultra Hi-Res",
-      description: "Stream music in lossless FLAC quality up to 192kHz/24bit"
-    },
-    {
-      icon: <Sparkles className="w-8 h-8" />,
-      title: "Crystal Clear",
-      description: "Experience every detail with studio-master audio quality"
-    },
-    {
-      icon: <Shield className="w-8 h-8" />,
-      title: "Premium Library",
-      description: "Access millions of tracks in the highest resolution"
-    }
-  ];
+  const [user, setUser] = useState<any>(null);
+  const [recentSongs, setRecentSongs] = useState<any[]>([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+      if (!user) {
+        navigate("/auth");
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (!session?.user) {
+        navigate("/auth");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  useEffect(() => {
+    const fetchRecentSongs = async () => {
+      const { data } = await supabase
+        .from("songs")
+        .select(`
+          *,
+          artists (name),
+          albums (title, cover_url)
+        `)
+        .order("created_at", { ascending: false })
+        .limit(6);
+
+      if (data) setRecentSongs(data);
+    };
+
+    if (user) fetchRecentSongs();
+  }, [user]);
+
+  if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-background font-inter">
+    <div className="min-h-screen bg-background">
       <Navigation />
       
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-20">
-        <div className="absolute inset-0 bg-grid-pattern bg-[size:40px_40px] opacity-10"></div>
-        
-        <div className="relative max-w-7xl mx-auto px-6 py-24">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8 animate-slide-up">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-                <span className="text-sm font-semibold text-primary">Hi-Res Audio Streaming</span>
-              </div>
-
-              <h1 className="text-6xl lg:text-7xl font-bold font-orbitron leading-tight">
-                <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                  Hear Music
-                </span>
-                <br />
-                Like Never Before
+      <section className="relative pt-32 pb-16 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="relative rounded-3xl overflow-hidden mb-16" style={{ height: "400px" }}>
+            <img 
+              src={heroImage} 
+              alt="Hero" 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-12">
+              <h1 className="text-5xl md:text-6xl font-semibold mb-4 text-white">
+                Experience Music in <span className="text-primary">Hi-Res</span>
               </h1>
-
-              <p className="text-xl text-muted-foreground leading-relaxed">
-                Experience studio-quality sound with our revolutionary Hi-Res streaming platform. 
-                Every note, every detail, perfectly preserved.
+              <p className="text-xl text-white/90 mb-6 max-w-2xl">
+                Stream millions of songs in studio-quality sound
               </p>
-
-              <div className="flex flex-wrap gap-4">
-                <Link to="/player">
-                  <Button className="bg-gradient-to-r from-primary to-secondary hover:shadow-[var(--glow-primary)] transition-all text-lg px-8 py-6 font-semibold">
-                    <Play className="w-5 h-5 mr-2" />
-                    Start Listening
-                  </Button>
-                </Link>
-                <Link to="/payment">
-                  <Button variant="outline" className="border-primary text-primary hover:bg-primary/10 text-lg px-8 py-6 font-semibold">
-                    View Plans
-                  </Button>
-                </Link>
-              </div>
-            </div>
-
-            <div className="relative animate-fade-in">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary rounded-3xl blur-3xl opacity-30 animate-glow-pulse"></div>
-              <img
-                src={heroImage}
-                alt="Futuristic music streaming interface"
-                className="relative rounded-3xl border border-primary/30 shadow-2xl"
-              />
+              <Link to="/browse">
+                <Button size="lg" className="bg-primary hover:bg-primary/90">
+                  <Play className="w-5 h-5 mr-2" />
+                  Start Listening
+                </Button>
+              </Link>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Features Section */}
-      <section className="max-w-7xl mx-auto px-6 py-24">
-        <div className="text-center mb-16 animate-slide-up">
-          <h2 className="text-4xl lg:text-5xl font-bold font-orbitron mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Why Choose Hi-Res?
-          </h2>
-          <p className="text-xl text-muted-foreground">Uncompromised audio quality for true music lovers</p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <Card
-              key={feature.title}
-              className="bg-card border-border backdrop-blur-lg p-8 hover:border-primary/50 transition-all animate-slide-up hover:scale-105"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center mb-6 text-primary">
-                {feature.icon}
+          {/* Recently Added */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-semibold mb-6">Recently Added</h2>
+            {recentSongs.length === 0 ? (
+              <p className="text-muted-foreground">No songs available yet. Visit the Admin panel to add content.</p>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                {recentSongs.map((song) => (
+                  <Card key={song.id} className="p-4 bg-card border-border hover:bg-muted/50 cursor-pointer transition-all">
+                    {song.albums?.cover_url || song.cover_url ? (
+                      <img 
+                        src={song.albums?.cover_url || song.cover_url} 
+                        alt={song.title} 
+                        className="w-full aspect-square rounded object-cover mb-3" 
+                      />
+                    ) : (
+                      <div className="w-full aspect-square rounded bg-primary/20 flex items-center justify-center mb-3">
+                        <Music className="w-12 h-12" />
+                      </div>
+                    )}
+                    <p className="font-medium text-sm truncate">{song.title}</p>
+                    <p className="text-xs text-muted-foreground truncate">{song.artists?.name}</p>
+                  </Card>
+                ))}
               </div>
-              <h3 className="text-2xl font-bold font-orbitron mb-3">{feature.title}</h3>
-              <p className="text-muted-foreground">{feature.description}</p>
-            </Card>
-          ))}
+            )}
+          </div>
         </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="max-w-7xl mx-auto px-6 py-24">
-        <Card className="bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 border-primary/30 backdrop-blur-lg p-12 text-center animate-slide-up">
-          <h2 className="text-4xl lg:text-5xl font-bold font-orbitron mb-6 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-            Ready to Experience Premium Sound?
-          </h2>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Join thousands of audiophiles streaming in the highest quality available
-          </p>
-          <Link to="/payment">
-            <Button className="bg-gradient-to-r from-primary to-secondary hover:shadow-[var(--glow-primary)] transition-all text-lg px-8 py-6 font-semibold">
-              Get Started Today
-            </Button>
-          </Link>
-        </Card>
       </section>
     </div>
   );
