@@ -51,8 +51,8 @@ const Auth = () => {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6">
       <Card className="w-full max-w-md p-8 bg-card border-border">
-        <div className="flex flex-col items-center mb-8">
-          <h1 className="text-3xl font-semibold font-orbitron">humm.</h1>
+        <div className="flex flex-col items-center justify-center mb-8">
+          <h1 className="text-3xl font-semibold font-orbitron text-center">humm.</h1>
           <p className="text-muted-foreground mt-2">
             {isLogin ? "Welcome back" : "Create your account"}
           </p>
